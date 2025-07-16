@@ -1,4 +1,3 @@
-const workerUrl = 'https://tablette-api.jordan-toulain.workers.dev';
 let params = new URLSearchParams(document.location.search);
 let API_TOKEN = params.get("token");
 let forceStop = false;
