@@ -217,6 +217,11 @@ header h1 { font-size: 1.875rem; font-weight: 700; color: #bdbdbd; z-index: -1; 
     max-height: 80vh;
     object-fit: contain;
     border-radius: 10px;
+    transition: 1s;
+
+    &:hover{
+        transform: scale(1.05);
+    }
 }
 .modal-close, .modal-nav {
     position: absolute;

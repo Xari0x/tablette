@@ -284,6 +284,10 @@ header h1 {
   max-height: 80vh;
   object-fit: contain;
   border-radius: 10px;
+  transition: 1s;
+}
+#modal-img:hover {
+  transform: scale(1.05);
 }
 
 .modal-close, .modal-nav {
