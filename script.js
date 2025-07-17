@@ -24,9 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         notificationContainer.appendChild(notif);
 
-        setTimeout(() => {
-            notif.remove();
-        }, 5000);
+
+        if(type != 'error'){
+            setTimeout(() => {
+                notif.remove();
+            }, 5000);
+        }
     }
     
     ws.onclose = () => {
@@ -211,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Aucune carte trouvée avec cet id.`);
             }
         } else if (data.type === 'find_error'){
-            showNotification('La cible a déjà été trouvée.', 'error')
+            showNotification('La cible a déjà été trouvée.', 'warning')
         } else if (data.error) {
             showNotification(data.error, 'error')
         }

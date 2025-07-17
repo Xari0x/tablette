@@ -343,19 +343,21 @@ header h1 {
   border-radius: 6px;
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
 }
 
 .notification.success {
   background-color: #2ecc71;
+  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
 }
 
 .notification.warning {
   background-color: #e67e22;
+  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
 }
 
 .notification.error {
   background-color: #e74c3c;
+  animation: fadeInDown 0.5s ease;
 }
 
 @keyframes fadeInDown {
