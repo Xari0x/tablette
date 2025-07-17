@@ -249,6 +249,37 @@ header h1 { font-size: 1.875rem; font-weight: 700; color: #bdbdbd; z-index: -1; 
 #modal-prev { left: 1rem; }
 #modal-next { right: 1rem; }
 
+#notification-container {
+    position: absolute;
+    top: 4rem; /* Sous la barre de statut */
+    right: 1.5rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 300px;
+}
+.notification {
+    padding: 1rem;
+    color: white;
+    border-radius: 6px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+}
+.notification.success { background-color: #2ecc71; }
+.notification.warning { background-color: #e67e22; }
+.notification.error { background-color: #e74c3c; }
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
 @media (min-width: 768px) { #car-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) { #car-grid { grid-template-columns: repeat(3, 1fr); } body { padding: 2rem; } }
 @media (min-width: 1524px) { #car-grid { grid-template-columns: repeat(4, 1fr); } body { padding: 2rem; } }

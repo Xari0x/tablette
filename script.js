@@ -1,58 +1,47 @@
 let params = new URLSearchParams(document.location.search);
 let API_TOKEN = params.get("token");
 let forceStop = false;
+const ws = new WebSocket('wss://tablette-api.jordan-toulain.workers.dev/ws');
 
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://tablette-api.jordan-toulain.workers.dev';
-    const REFRESH_INTERVAL = 10000;
-    let currentVehicles = [];
 
-    const api = {
-        fetchVehicles: () => {
-            return fetch(`${API_BASE_URL}/vehicles`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'token': API_TOKEN
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erreur réseau: ${response.statusText}`);
-                    }
-                    return response.json();
-                });
-        },
-        validateTarget: (id) => {
-            return fetch(`${API_BASE_URL}/findVehicle`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'token': API_TOKEN,
-                    'veh': id
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur réseau: ${response.statusText}`);
-                }
-                return response.json();
-            });
-        }
+    ws.onopen = () => {
+        console.log('✅ Connecté au WebSocket !');
+        const userToken = API_TOKEN;
+        ws.send(JSON.stringify({ type: 'auth', token: userToken }));
     };
+
+    let currentVehicles = [];
 
     const carGrid = document.getElementById('car-grid');
     const contentWrapper = document.querySelector('.content-wrapper');
+    const notificationContainer = document.getElementById('notification-container');
+
+    function showNotification(message, type = 'success') {
+        const notif = document.createElement('div');
+        notif.className = `notification ${type}`;
+        notif.textContent = message;
+        
+        notificationContainer.appendChild(notif);
+
+        setTimeout(() => {
+            notif.remove();
+        }, 5000);
+    }
+    
+    ws.onclose = () => {
+        console.log('👀 Déconnecté.');
+        showNotification('Déconnecté de la tablette.', 'error')
+    };
 
     const renderVehicles = (vehicles) => {
 
-        carGrid.innerHTML = '';
-        
+        carGrid.innerHTML = '';        
 
         let count = 0;
 
         vehicles.forEach(car => {
-            if(car[1] === "") {return};
+            if(car[1] === "" || car[1] === null || car[1] === undefined) {return};
             count++;
             const card = document.createElement('div');
             card.className = 'car-card';
@@ -94,20 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
             carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
             return;
         }
+
+        carGrid.classList.remove('loading');
     };
 
-    const updateVehicleList = async () => {
+    const updateVehicleList = async (vehicles) => {
         if(forceStop === true){ return; }
-        carGrid.classList.add('loading');
         try {
-            const vehicles = await api.fetchVehicles(API_TOKEN);
             currentVehicles = vehicles;
             renderVehicles(vehicles);
         } catch (error) {
             carGrid.innerHTML = `<p style="color: var(--c-red-error);">Impossible de charger les données. Vérifiez la connexion et le token API.</p>`;
             forceStop = true
-        } finally {
-            carGrid.classList.remove('loading');
         }
     };
 
@@ -147,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentImageIndex < lightboxImages.length - 1) {
             currentImageIndex++;
             showImage(currentImageIndex);
-            console.log(currentImageIndex, lightboxImages.length)
         }
     });
 
@@ -155,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentImageIndex > 0) {
             currentImageIndex--;
             showImage(currentImageIndex);
-            console.log(currentImageIndex, lightboxImages.length)
         }
     });
     
@@ -179,19 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = 'Validation en cours...';
 
             try {
-                const response = await api.validateTarget(id);
-                if (response.success) {
-                    button.disabled = true;
-                    button.textContent = `Contactez : ${response.contact || '555-XXXX'}`;
-                    card.classList.add('validated');
-                } else {
-                    throw new Error(response.message || 'La validation a échoué.');
-                }
+                console.log(`➡️ Envoi de la demande pour trouver le véhicule ${id}`);
+                ws.send(JSON.stringify({ type: 'find', vehID: id }));
             } catch (error) {
-                button.textContent = 'Échec lors de la validation.';
-                updateVehicleList()
-            } finally {
-                button.classList.remove('loading');
+                button.textContent = 'La validation a échoué.';
             }
         }
     });
@@ -212,6 +188,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    updateVehicleList();
-    setInterval(updateVehicleList, REFRESH_INTERVAL);
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('⬅️ Message reçu:', data);
+
+        if (data.type === 'auth_success') {
+            showNotification('Connexion réussie.', 'success')
+        } else if (data.type === 'vehicles_update') {
+            carGrid.classList.add('loading');
+            setTimeout(() => updateVehicleList(data.payload), 300);
+        } else if (data.type === 'find_success') {
+            showNotification('Cible validée.', 'success')
+
+            const targetCard = Array.from(document.querySelectorAll('.car-card')).find(card => card.dataset.id === data.vehID);
+
+            if (targetCard) {
+                const button = targetCard.querySelector('button');
+                button.disabled = true;
+                button.textContent = `Contactez : ${data.payload.contact || '555-XXXX'}`;
+                targetCard.classList.add('validated');
+            } else {
+                alert(`Aucune carte trouvée avec cet id.`);
+            }
+        } else if (data.type === 'find_error'){
+            showNotification('La cible a déjà été trouvée.', 'error')
+        } else if (data.error) {
+            showNotification(data.error, 'error')
+        }
+    };
 });
