@@ -1,6 +1,3 @@
-//===============================================
-// Réinitialisation et styles de base
-//===============================================
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,9 +23,6 @@ body {
     padding: 1rem;
 }
 
-//===============================================
-// Structure de la tablette
-//===============================================
 .tablet-frame {
     width: 100%;
     max-width: 1500px;
@@ -90,13 +84,8 @@ body {
     }
 
     .status-icon { width: 16px; height: 16px; }
-    .wifi-icon { width: 20px; height: 20px; }
-    .battery-icon { width: 24px; height: 24px; }
 }
 
-//===============================================
-// Contenu principal
-//===============================================
 .main-content {
     flex-grow: 1;
     overflow-y: auto;
@@ -123,6 +112,9 @@ header {
     border-bottom: 1px solid #bdbdbd;
     padding-bottom: 1rem;
     margin: 3rem 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     h1 {
         font-size: 1.875rem;
@@ -130,20 +122,18 @@ header {
         color: #bdbdbd;
         z-index: -1;
     }
+    p {
+        color: #888;
+    }
 }
 
-//===============================================
-// Grille et cartes de voitures
-//===============================================
 #car-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
     transition: opacity 0.3s ease-in-out;
 
-    &.loading {
-        opacity: 0.5;
-    }
+    &.loading { opacity: 0.5; }
 }
 
 .car-card {
@@ -156,26 +146,17 @@ header {
     flex-direction: column;
     transition: border 0.2s;
 
-    &.validated {
-        border: 2px solid #2ecc71;
-    }
-
+    &.validated { border: 2px solid #2ecc71; }
     &.validated2 {
         border: 2px solid #e74c3c;
-
-        .car-image {
-            filter: grayscale(1) opacity(0.5);
-        }
+        .car-image { filter: grayscale(1) opacity(0.5); }
     }
-
-    .card-content {
-        padding: 1rem;
+    &.validated3 {
+        border: 2px solid #e67e22;
+        .car-image { filter: grayscale(1) opacity(0.5); }
     }
-
-    .card-image-container {
-        margin-bottom: 1rem;
-    }
-
+    .card-content { padding: 1rem; }
+    .card-image-container { margin-bottom: 1rem; }
     .car-image {
         border-radius: 6px;
         width: 100%;
@@ -183,12 +164,8 @@ header {
         object-fit: cover;
         cursor: pointer;
         transition: transform 0.3s ease-in-out;
-
-        &:hover {
-            transform: scale(1.05);
-        }
+        &:hover { transform: scale(1.05); }
     }
-
     .card-title {
         text-align: center;
         font-size: 1.25rem;
@@ -198,7 +175,6 @@ header {
         text-overflow: ellipsis;
         text-transform: uppercase;
     }
-
     .card-footer {
         margin-top: auto;
         padding: 1rem;
@@ -207,11 +183,9 @@ header {
     }
 }
 
-//===============================================
-// Boutons
-//===============================================
 .target-btn,
-.found-btn {
+.found-btn,
+#admin-panel-btn {
     width: 100%;
     background-color: #282828;
     color: #e7e7e7;
@@ -223,27 +197,27 @@ header {
     transition: background-color 0.3s;
 }
 
+#admin-panel-btn {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    border: 2px solid #bdbdbd;
+    background-color: transparent;
+    transition: .2s;
+    &:hover {
+        padding: 0.6rem 1.5rem;
+    }
+}
+
 .target-btn {
-    &:hover:not(:disabled) {
-        background-color: #e67e22;
-    }
-
-    &:focus {
-        outline: 2px solid #e67e22;
-        outline-offset: 2px;
-    }
-
+    &:hover:not(:disabled) { background-color: #e67e22; }
+    &:focus { outline: 2px solid #e67e22; outline-offset: 2px; }
     &.unfind-btn {
         background-color: #2ecc71;
         color: #fff;
         cursor: pointer;
         position: relative;
         overflow: hidden;
-
-        .text-original {
-            transition: opacity 0.2s ease-in-out;
-        }
-
+        .text-original { transition: opacity 0.2s ease-in-out; }
         &::after {
             content: 'Annuler la cible.';
             position: absolute;
@@ -259,23 +233,43 @@ header {
             visibility: hidden;
             transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
         }
-
         &:hover {
             background-color: #2ecc71;
-            .text-original {
-                opacity: 0;
-            }
-            &::after {
-                opacity: 1;
-                visibility: visible;
-            }
+            .text-original { opacity: 0; }
+            &::after { opacity: 1; visibility: visible; }
         }
     }
 
-    &.loading {
+    &.unfindother-btn{
         background-color: #e67e22;
-        cursor: wait;
+        color: #fff;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        .text-original { transition: opacity 0.2s ease-in-out; }
+        &::after {
+            content: 'Annuler la cible.';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #c0392b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+        &:hover {
+            background-color: #e67e22;
+            .text-original { opacity: 0; }
+            &::after { opacity: 1; visibility: visible; }
+        }
     }
+
+    &.loading { background-color: #e67e22; cursor: wait; }
 }
 
 .found-btn:disabled {
@@ -285,9 +279,6 @@ header {
     color: #ffffff;
 }
 
-//===============================================
-// Modale
-//===============================================
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -322,54 +313,143 @@ header {
     object-fit: contain;
     border-radius: 10px;
     transition: 1s;
+    &:hover { transform: scale(1.05); }
+}
 
-    &:hover {
-        transform: scale(1.05);
+.admin-modal-content {
+    background-color: #282828;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    border: 1px solid #444;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #e0e0e0;
     }
 }
 
-.modal-close,
-.modal-nav {
+.modal-close-btn {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    top: 10px;
+    right: 15px;
+    background: none;
     border: none;
-    cursor: pointer;
+    color: #aaa;
     font-size: 2rem;
-    z-index: 1002;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+    &:hover { color: #fff; }
 }
 
-.modal-close {
-    top: -40px;
-    right: 0;
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    padding: 0;
-    border-radius: 50%;
-}
-
-.modal-nav {
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-
-    &.hidden {
-        display: none;
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #ccc;
     }
 }
 
-#modal-prev { left: 1rem; }
-#modal-next { right: 1rem; }
+#admin-vehicle-search {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #1f1f1f;
+    border: 1px solid #555;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    user-select: text;
+}
 
-//===============================================
-// Notifications
-//===============================================
+#admin-search-results {
+    position: absolute;
+    width: 100%;
+    background-color: #1f1f1f;
+    border: 1px solid #555;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    margin-top: -1px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    display: none;
+
+    .result-item {
+        padding: 0.75rem;
+        color: #e0e0e0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: #3a3a3a;
+        }
+    }
+
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+    &::-webkit-scrollbar-thumb:hover { background: #777; }
+}
+
+
+.image-preview-container {
+    width: 100%;
+    background-color: #1f1f1f;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 0.5rem;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    #admin-vehicle-preview {
+        max-width: 100%;
+        max-height: 250px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    .admin-action-btn {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.set-btn {
+            background-color: #27ae60;
+            color: white;
+            &:hover { background-color: #2ecc71; }
+        }
+        &.remove-btn {
+            background-color: #c0392b;
+            color: white;
+            &:hover { background-color: #e74c3c; }
+        }
+    }
+}
+
 #notification-container {
     position: absolute;
-    top: 4rem; /* Sous la barre de statut */
+    top: 4rem;
     right: 1.5rem;
     z-index: 1000;
     display: flex;
@@ -384,70 +464,14 @@ header {
     border-radius: 6px;
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-    &.success {
-        background-color: #2ecc71;
-        animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
-    }
-
-    &.warning {
-        background-color: #e67e22;
-        animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
-    }
-
-    &.error {
-        background-color: #e74c3c;
-        animation: fadeInDown 0.5s ease;
-    }
+    &.success { background-color: #2ecc71; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
+    &.warning { background-color: #e67e22; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
+    &.error { background-color: #e74c3c; animation: fadeInDown 0.5s ease; }
 }
 
-//===============================================
-// Animations
-//===============================================
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-}
-
-//===============================================
-// Media Queries
-//===============================================
-@media (min-width: 768px) {
-    #car-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    body {
-        padding: 2rem;
-    }
-    #car-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (min-width: 1524px) {
-    body {
-        padding: 2rem;
-    }
-    #car-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
+@media (min-width: 768px) { #car-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { body { padding: 2rem; } #car-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1524px) { body { padding: 2rem; } #car-grid { grid-template-columns: repeat(4, 1fr); } }

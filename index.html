@@ -6,7 +6,7 @@
     <title>Tablette</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <!-- <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script> -->
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="./styles/style.css" rel="stylesheet">
@@ -29,8 +29,11 @@
             <div class="main-content">
                 <div class="content-wrapper">
                     <header>
-                        <h1>Véhicules</h1>
-                        <p>Liste des véhicules à récupérer.</p>
+                        <div class="header-main">
+                            <h1>Véhicules</h1>
+                            <p>Liste des véhicules à récupérer.</p>
+                        </div>
+                        <button id="admin-panel-btn" style="display: none;">Modifier ma cible.</button>
                     </header>
                     <div id="car-grid"></div>
                 </div>
@@ -41,6 +44,29 @@
     <div id="image-modal" class="modal-overlay">
         <div class="modal-content">
             <img id="modal-img" src="" alt="Image en grand">
+        </div>
+    </div>
+
+    <div id="admin-modal-overlay" class="modal-overlay">
+        <div class="admin-modal-content">
+            <h2>Gérer ma cible.</h2>
+            <div class="admin-form">
+                <div class="form-group">
+                    <label for="admin-vehicle-search">Modèle de véhicule :</label>
+                    <input type="text" id="admin-vehicle-search" placeholder="Rechercher un modèle..." autocomplete="off">
+                    <div id="admin-search-results"></div>
+                </div>
+                <div class="form-group preview-group">
+                    <label>Prévisualisation :</label>
+                    <div class="image-preview-container">
+                        <img id="admin-vehicle-preview" src="https://placehold.co/600x400/1f1f1f/555?text=Aucun+véhicule" alt="Prévisualisation du véhicule">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button id="admin-set-vehicle-btn" class="admin-action-btn set-btn">Définir</button>
+                    <button id="admin-remove-vehicle-btn" class="admin-action-btn remove-btn">Retirer</button>
+                </div>
+            </div>
         </div>
     </div>
     
