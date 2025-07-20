@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         notificationContainer.appendChild(notif);
 
-
         if(type != 'error'){
             setTimeout(() => {
                 notif.remove();
@@ -38,31 +37,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderVehicles = (vehicles) => {
-
         carGrid.innerHTML = '';        
-
         let count = 0;
 
         vehicles.forEach(car => {
-            if(car[1] === "" || car[1] === null || car[1] === undefined) {return};
+            if(!car[1]) {return};
             count++;
             const card = document.createElement('div');
             card.className = 'car-card';
             card.dataset.id = car[0]; 
             
-            let isAlreadyValidated = false
-            let isOthersValidated = false
-            if (car[3] === "FOUND"){
-                isOthersValidated = true
-            }
-            if (car[3] === API_TOKEN){
-                isAlreadyValidated = true
-            }
+            let isAlreadyValidated = car[3] === API_TOKEN;
+            let isOthersValidated = car[3] && car[3] !== API_TOKEN;
+
             if (isOthersValidated) {
                 card.classList.add('validated2');
             }
             if (isAlreadyValidated) {
                 card.classList.add('validated');
+            }
+
+            let buttonHtml;
+            if (isOthersValidated) {
+                buttonHtml = '<button class="found-btn" disabled>Indisponible.</button>';
+            } else if (isAlreadyValidated) {
+                buttonHtml = `<button class="target-btn unfind-btn">
+                                <span class="text-original">Contactez : ${car[2] || 'INFO'}</span>
+                              </button>`;
+            } else {
+                buttonHtml = '<button class="target-btn">Valider la cible.</button>';
             }
 
             card.innerHTML = `
@@ -75,16 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2 class="card-title">${car[1]}</h2>
                 </div>
                 <div class="card-footer">
-                    ${isOthersValidated ? '<button class="found-btn" disabled>Indisponible.</button>' : `<button class="target-btn" ${isAlreadyValidated ? 'disabled' : ''}>
-                        ${isAlreadyValidated ? `Contactez : ${car[2]}` : 'Valider la cible.'}
-                    </button>`}
+                    ${buttonHtml}
                 </div>`;
             carGrid.appendChild(card);
         });
 
         if (count === 0) {
             carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
-            return;
         }
 
         carGrid.classList.remove('loading');
@@ -164,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (button.disabled || button.classList.contains('loading')) return;
 
             button.classList.add('loading');
-            button.textContent = 'Validation en cours...';
 
-            try {
-                console.log(`➡️ Envoi de la demande pour trouver le véhicule ${id}`);
+            if (button.classList.contains('unfind-btn')) {
+                button.textContent = 'Annulation...';
+                ws.send(JSON.stringify({ type: 'unfind', vehID: id }));
+            } else {
+                button.textContent = 'Validation en cours...';
                 ws.send(JSON.stringify({ type: 'find', vehID: id }));
-            } catch (error) {
-                button.textContent = 'La validation a échoué.';
             }
         }
     });
@@ -195,28 +195,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = JSON.parse(event.data);
         console.log('⬅️ Message reçu:', data);
 
-        if (data.type === 'auth_success') {
-            showNotification('Connexion réussie.', 'success')
-        } else if (data.type === 'vehicles_update') {
-            carGrid.classList.add('loading');
-            setTimeout(() => updateVehicleList(data.payload), 300);
-        } else if (data.type === 'find_success') {
-            showNotification('Cible validée.', 'success')
-
-            const targetCard = Array.from(document.querySelectorAll('.car-card')).find(card => card.dataset.id === data.vehID);
-
-            if (targetCard) {
-                const button = targetCard.querySelector('button');
-                button.disabled = true;
-                button.textContent = `Contactez : ${data.payload.contact || '555-XXXX'}`;
-                targetCard.classList.add('validated');
-            } else {
-                alert(`Aucune carte trouvée avec cet id.`);
-            }
-        } else if (data.type === 'find_error'){
-            showNotification('La cible a déjà été trouvée.', 'warning')
-        } else if (data.error) {
-            showNotification(data.error, 'error')
+        switch (data.type) {
+            case 'auth_success':
+                showNotification('Connexion réussie.', 'success');
+                break;
+            case 'vehicles_update':
+                carGrid.classList.add('loading');
+                setTimeout(() => updateVehicleList(data.payload), 300);
+                break;
+            case 'find_success':
+                showNotification('Cible validée.', 'success');
+                // L'interface sera mise à jour par 'vehicles_update' qui suit
+                break;
+            case 'unfind_success':
+                showNotification('Validation annulée.', 'success');
+                // L'interface sera mise à jour par 'vehicles_update' qui suit
+                break;
+            case 'find_error':
+            case 'unfind_error':
+                showNotification(data.message || 'Une erreur est survenue.', 'warning');
+                const loadingButton = carGrid.querySelector('.target-btn.loading');
+                if (loadingButton) {
+                    loadingButton.classList.remove('loading');
+                }
+                break;
+            case 'error':
+                 showNotification(data.error, 'error');
+                 break;
         }
     };
 });

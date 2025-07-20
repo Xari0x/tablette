@@ -217,15 +217,44 @@ header h1 {
   outline: 2px solid #e67e22;
   outline-offset: 2px;
 }
+.target-btn.unfind-btn {
+  background-color: #2ecc71;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.target-btn.unfind-btn .text-original {
+  transition: opacity 0.2s ease-in-out;
+}
+.target-btn.unfind-btn::after {
+  content: "Annuler la cible.";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #c0392b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+.target-btn.unfind-btn:hover {
+  background-color: #2ecc71;
+}
+.target-btn.unfind-btn:hover .text-original {
+  opacity: 0;
+}
+.target-btn.unfind-btn:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
 .target-btn.loading {
   background-color: #e67e22;
   cursor: wait;
-}
-.target-btn:disabled {
-  background-color: #2ecc71;
-  cursor: not-allowed;
-  opacity: 1;
-  color: #fcfcfc;
 }
 
 .found-btn:disabled {
