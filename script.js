@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (filteredModels.length > 0) {
                 filteredModels.forEach(model => {
+                    adminVehiclePreview.src = `./images/${filteredModels[0]}_front.png`;
                     const item = document.createElement('div');
                     item.className = 'result-item';
                     item.textContent = model;
