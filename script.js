@@ -1,20 +1,12 @@
-let params = new URLSearchParams(document.location.search);
-let API_TOKEN = params.get("token");
-let forceStop = false;
-const ws = new WebSocket('wss://tablette-api.jordan-toulain.workers.dev/ws');
-
-const VEHICLE_MODELS = [
-    'FAGGIO', 'BLAZER', 'BAGGER', 'NEMESIS', 'RUFFIAN', 'PCJ 600', 'THRUST', 'VADER', 'HAKUCHOU', 'DOUBLE T', 'DAEMON', 'BATI 801', 'SANCHEZ', 'AKUMA', 'CAVALCADE', 'TACO VAN', 'INTRUDER', 'SURGE', 'SENTINEL', 'SENTINEL XS', 'VIGERO', 'ORACLE', 'ORACLE XS', 'BANSHEE', 'SURFER', 'FQ 2', 'SURANO', 'DUBSTA', 'PICADOR', 'SCHAFTER', 'BUCCANEER', 'PHOENIX', 'WARRENER', 'MESA', 'RANCHER XL', 'BEEJAY XL', 'GRANGER', 'INFERNUS', 'FUGITIVE', 'RHAPSODY', 'LANDSTALKER', 'FELTZER', 'PENUMBRA', 'PRIMO', 'BALLER', 'MINIVAN', 'FELON GT', 'FELON', 'SABRE TURBO', 'CARBONIZZARE', 'HABANERO', 'BUFFALO', 'MASSACRO', 'INGOT', 'DUNELOADER', 'F620', 'JESTER', 'SANDKING XL', 'SANDKING SWB', 'DUKES', 'EXEMPLAR', 'MANANA', 'DILETTANTE', 'JACKAL', 'BLISTA', 'BLISTA COMPACT', 'SCHWARTZER', 'FUTO', 'TORNADO', 'ALPHA', 'RADIUS', 'ISSI', 'BOBCAT XL', 'SADLER', 'SULTAN', 'FURORE GT', 'ROCOTO', 'GAUNTLET', 'VOLTIC', 'CADDIE', 'ASTEROPE', 'REGINA', 'SUPER DIAMOND', 'BISON', 'PANTO', 'INJECTION', 'PIGALLE', 'EMPEROR', 'RAPID GT', 'DOMINATOR', 'GRESLEY', 'PREMIER', 'ZION', 'ZION CABRIO', 'PEYOTE', 'SEMINOLE', 'COQUETTE', 'STRATUM', 'YOUGA', 'SERRANO', 'PATRIOT', 'FUSILADE', 'COMET', 'PRAIRIE', '9F', 'REBEL ROUILLÉ', 'REBEL', 'GLENDALE', 'WASHINGTON', 'STALLION', 'HUNTLEY S', '9F CABRIO', 'RUINER', 'DUNE BUGGY'
-];
-
 document.addEventListener('DOMContentLoaded', () => {
+    let params = new URLSearchParams(document.location.search);
+    let API_TOKEN = params.get("token");
+    let forceStop = false;
+    let ws;
 
-    ws.onopen = () => {
-        console.log('✅ Connecté au WebSocket !');
-        if (API_TOKEN) {
-            ws.send(JSON.stringify({ type: 'auth', token: API_TOKEN }));
-        }
-    };
+    const VEHICLE_MODELS = [
+        'FAGGIO', 'BLAZER', 'BAGGER', 'NEMESIS', 'RUFFIAN', 'PCJ 600', 'THRUST', 'VADER', 'HAKUCHOU', 'DOUBLE T', 'DAEMON', 'BATI 801', 'SANCHEZ', 'AKUMA', 'CAVALCADE', 'TACO VAN', 'INTRUDER', 'SURGE', 'SENTINEL', 'SENTINEL XS', 'VIGERO', 'ORACLE', 'ORACLE XS', 'BANSHEE', 'SURFER', 'FQ 2', 'SURANO', 'DUBSTA', 'PICADOR', 'SCHAFTER', 'BUCCANEER', 'PHOENIX', 'WARRENER', 'MESA', 'RANCHER XL', 'BEEJAY XL', 'GRANGER', 'INFERNUS', 'FUGITIVE', 'RHAPSODY', 'LANDSTALKER', 'FELTZER', 'PENUMBRA', 'PRIMO', 'BALLER', 'MINIVAN', 'FELON GT', 'FELON', 'SABRE TURBO', 'CARBONIZZARE', 'HABANERO', 'BUFFALO', 'MASSACRO', 'INGOT', 'DUNELOADER', 'F620', 'JESTER', 'SANDKING XL', 'SANDKING SWB', 'DUKES', 'EXEMPLAR', 'MANANA', 'DILETTANTE', 'JACKAL', 'BLISTA', 'BLISTA COMPACT', 'SCHWARTZER', 'FUTO', 'TORNADO', 'ALPHA', 'RADIUS', 'ISSI', 'BOBCAT XL', 'SADLER', 'SULTAN', 'FURORE GT', 'ROCOTO', 'GAUNTLET', 'VOLTIC', 'CADDIE', 'ASTEROPE', 'REGINA', 'SUPER DIAMOND', 'BISON', 'PANTO', 'INJECTION', 'PIGALLE', 'EMPEROR', 'RAPID GT', 'DOMINATOR', 'GRESLEY', 'PREMIER', 'ZION', 'ZION CABRIO', 'PEYOTE', 'SEMINOLE', 'COQUETTE', 'STRATUM', 'YOUGA', 'SERRANO', 'PATRIOT', 'FUSILADE', 'COMET', 'PRAIRIE', '9F', 'REBEL ROUILLÉ', 'REBEL', 'GLENDALE', 'WASHINGTON', 'STALLION', 'HUNTLEY S', '9F CABRIO', 'RUINER', 'DUNE BUGGY'
+    ];
 
     let currentVehicles = [];
     let adminSlot = null;
@@ -43,11 +35,65 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => notif.remove(), 5000);
         }
     }
+    
+    function connectWebSocket() {
+        ws = new WebSocket('wss://tablette-api.jordan-toulain.workers.dev/ws');
 
-    ws.onclose = () => {
-        console.log('👀 Déconnecté.');
-        showNotification('Déconnecté de la tablette.', 'error');
-    };
+        ws.onopen = () => {
+            console.log('✅ Connecté au WebSocket !');
+            showNotification('Connecté à la tablette.', 'success');
+            if (API_TOKEN) {
+                ws.send(JSON.stringify({ type: 'auth', token: API_TOKEN }));
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('👀 Déconnecté. Tentative de reconnexion dans 5 secondes...');
+            showNotification('Connexion perdue. Tentative de reconnexion...', 'errortemp');
+            setTimeout(connectWebSocket, 5000); 
+        };
+        
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket:', error);
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('⬅️ Message reçu:', data);
+
+            switch (data.type) {
+                case 'auth_success':
+                    showNotification('Authentification réussie.', 'success');
+                    if (data.adminSlot) {
+                        adminSlot = data.adminSlot;
+                        setupAdminPanel();
+                    }
+                    break;
+                case 'vehicles_update':
+                    carGrid.classList.add('loading');
+                    setTimeout(() => updateVehicleList(data.payload), 300);
+                    break;
+                case 'find_error':
+                case 'unfind_error':
+                case 'set_vehicle_error':
+                case 'remove_vehicle_error':
+                    showNotification(data.message || 'Une erreur est survenue.', 'warning');
+                    updateVehicleList(currentVehicles);
+                    break;
+                case 'set_vehicle_success':
+                    showNotification('Cible définie avec succès.', 'success');
+                    break;
+                case 'remove_vehicle_success':
+                    showNotification('Cible retirée avec succès.', 'success');
+                    break;
+                case 'error':
+                    showNotification(data.error, 'error');
+                    break;
+            }
+        };
+    }
+
+    connectWebSocket();
 
     const renderVehicles = (vehicles) => {
         carGrid.innerHTML = '';
@@ -146,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (button) {
             const card = button.closest('.car-card');
             const id = card.dataset.id;
-            if (button.disabled || button.classList.contains('loading')) return;
+            if (button.disabled || button.classList.contains('loading') || !ws || ws.readyState !== WebSocket.OPEN) return;
             button.classList.add('loading');
             if (button.classList.contains('unfind-btn') || button.classList.contains('unfindother-btn')) {
                 button.innerHTML = 'Annulation...';
@@ -210,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         adminSetVehicleBtn.addEventListener('click', () => {
-            if (selectedModel && adminSlot && VEHICLE_MODELS.includes(selectedModel)) {
+            if (selectedModel && adminSlot && VEHICLE_MODELS.includes(selectedModel) && ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: 'setVehicle', slot: adminSlot, vehicleModel: selectedModel }));
                 adminModalOverlay.classList.remove("visible");
             } else {
@@ -219,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         adminRemoveVehicleBtn.addEventListener('click', () => {
-            if (adminSlot) {
+            if (adminSlot && ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: 'removeVehicle', slot: adminSlot }));
                 adminModalOverlay.classList.remove("visible");
             }
@@ -231,39 +277,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log('⬅️ Message reçu:', data);
-
-        switch (data.type) {
-            case 'auth_success':
-                showNotification('Connexion réussie.', 'success');
-                if (data.adminSlot) {
-                    adminSlot = data.adminSlot;
-                    setupAdminPanel();
-                }
-                break;
-            case 'vehicles_update':
-                carGrid.classList.add('loading');
-                setTimeout(() => updateVehicleList(data.payload), 300);
-                break;
-            case 'find_error':
-            case 'unfind_error':
-            case 'set_vehicle_error':
-            case 'remove_vehicle_error':
-                showNotification(data.message || 'Une erreur est survenue.', 'warning');
-                updateVehicleList(currentVehicles);
-                break;
-            case 'set_vehicle_success':
-                showNotification('Cible définie avec succès.', 'success');
-                break;
-            case 'remove_vehicle_success':
-                showNotification('Cible retirée avec succès.', 'success');
-                break;
-            case 'error':
-                showNotification(data.error, 'error');
-                break;
-        }
-    };
 });

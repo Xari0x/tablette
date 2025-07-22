@@ -467,6 +467,7 @@ header {
     &.success { background-color: #2ecc71; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
     &.warning { background-color: #e67e22; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
     &.error { background-color: #e74c3c; animation: fadeInDown 0.5s ease; }
+    &.errortemp { background-color: #e74c3c; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
 }
 
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
