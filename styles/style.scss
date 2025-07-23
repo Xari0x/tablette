@@ -125,6 +125,44 @@ header {
     p {
         color: #888;
     }
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    #live-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.6rem 1.2rem;
+        border: 2px solid #bdbdbd91;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #e0e0e0;
+        transition: .2s;
+    }
+
+    #live-user-count::before {
+        content: '●';
+        color: #2ecc71;
+        margin-right: 0.5rem;
+        font-size: 0.8em;
+        animation: pulse 1.5s infinite;
+    }
+
+    #tablet-status-display {
+        font-weight: 700;
+        &.status-open { color: #2ecc71; }
+        &.status-paused { color: #e67e22; }
+        &.status-closed { color: #e74c3c; }
+    }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 #car-grid {
@@ -185,11 +223,14 @@ header {
 
 .target-btn,
 .found-btn,
-#admin-panel-btn {
+#admin-panel-btn,
+#manage-tablet-btn {
     width: 100%;
     background-color: #282828;
     color: #e7e7e7;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 0.9em;
+    color: #e0e0e0;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     border: none;
@@ -197,14 +238,16 @@ header {
     transition: background-color 0.3s;
 }
 
-#admin-panel-btn {
+#admin-panel-btn,
+#manage-tablet-btn {
     width: auto;
-    padding: 0.6rem 1.2rem;
-    border: 2px solid #bdbdbd;
+    padding: 0.75rem 1.2rem;
+    border: 2px solid #bdbdbd91;
     background-color: transparent;
     transition: .2s;
+    white-space: nowrap;
     &:hover {
-        padding: 0.6rem 1.5rem;
+        border-color: #bdbdbdea;
     }
 }
 
@@ -438,6 +481,11 @@ header {
             background-color: #27ae60;
             color: white;
             &:hover { background-color: #2ecc71; }
+        }
+        &.pause-btn {
+            background-color: #e67e22;
+            color: white;
+            &:hover { background-color: #f39c12; }
         }
         &.remove-btn {
             background-color: #c0392b;

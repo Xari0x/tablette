@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageModal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-img');
     const timeEl = document.getElementById('tablet-time');
+    
+    const liveInfoEl = document.getElementById('live-info');
+    const liveUserCountEl = document.getElementById('live-user-count');
+    const tabletStatusDisplayEl = document.getElementById('tablet-status-display');
 
     const adminPanelBtn = document.getElementById('admin-panel-btn');
     const adminModalOverlay = document.getElementById('admin-modal-overlay');
@@ -25,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminVehiclePreview = document.getElementById('admin-vehicle-preview');
     const adminSetVehicleBtn = document.getElementById('admin-set-vehicle-btn');
     const adminRemoveVehicleBtn = document.getElementById('admin-remove-vehicle-btn');
+
+    const manageTabletBtn = document.getElementById('manage-tablet-btn');
+    const manageTabletModalOverlay = document.getElementById('manage-tablet-modal-overlay');
+    const currentTabletStatusEl = document.getElementById('current-tablet-status');
+    const manageTabletCloseBtn = manageTabletModalOverlay.querySelector('.modal-close-btn');
+    const manageTabletActionBtns = manageTabletModalOverlay.querySelector('.form-actions');
 
     function showNotification(message, type = 'success') {
         const notif = document.createElement('div');
@@ -50,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onclose = () => {
             console.log('👀 Déconnecté. Tentative de reconnexion dans 5 secondes...');
             showNotification('Connexion perdue. Tentative de reconnexion...', 'errortemp');
+            liveInfoEl.style.display = 'none';
             setTimeout(connectWebSocket, 5000); 
         };
         
@@ -73,10 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     carGrid.classList.add('loading');
                     setTimeout(() => updateVehicleList(data.payload), 300);
                     break;
+                case 'user_count':
+                    liveUserCountEl.textContent = `${data.count} en ligne`;
+                    liveInfoEl.style.display = 'flex';
+                    break;
+                case 'tablet_status':
+                    updateTabletStatus(data.status);
+                    break;
                 case 'find_error':
                 case 'unfind_error':
                 case 'set_vehicle_error':
                 case 'remove_vehicle_error':
+                case 'set_status_error':
                     showNotification(data.message || 'Une erreur est survenue.', 'warning');
                     updateVehicleList(currentVehicles);
                     break;
@@ -86,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'remove_vehicle_success':
                     showNotification('Cible retirée avec succès.', 'success');
                     break;
+                 case 'set_status_success':
+                    showNotification(`Statut de la tablette mis à jour.`, 'success');
+                    break;
                 case 'error':
                     showNotification(data.error, 'error');
                     break;
@@ -94,6 +116,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     connectWebSocket();
+
+    const updateTabletStatus = (status) => {
+        let statusText = 'Inconnu';
+        let statusClass = '';
+        
+        switch (status) {
+            case 'open':
+                statusText = 'Ouverte';
+                statusClass = 'status-open';
+                carGrid.innerHTML = currentVehicles.length > 0 ? '' : `<p>Aucune cible disponible pour le moment.</p>`;
+                if (currentVehicles.length > 0) renderVehicles(currentVehicles);
+                break;
+            case 'paused':
+                statusText = 'En pause';
+                statusClass = 'status-paused';
+                carGrid.innerHTML = `<p>La tablette est actuellement en pause. Revenez plus tard.</p>`;
+                break;
+            case 'closed':
+                statusText = 'Fermée';
+                statusClass = 'status-closed';
+                carGrid.innerHTML = `<p>La tablette est actuellement fermée.</p>`;
+                break;
+        }
+
+        tabletStatusDisplayEl.textContent = statusText;
+        tabletStatusDisplayEl.className = `tablet-status-display ${statusClass}`;
+        currentTabletStatusEl.textContent = statusText;
+        currentTabletStatusEl.className = `tablet-status-display ${statusClass}`;
+    };
 
     const renderVehicles = (vehicles) => {
         carGrid.innerHTML = '';
@@ -209,16 +260,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupAdminPanel() {
         adminPanelBtn.style.display = 'block';
+        manageTabletBtn.style.display = 'block';
         let selectedModel = null;
         
         VEHICLE_MODELS.sort();
 
         adminPanelBtn.addEventListener('click', () => adminModalOverlay.classList.add("visible"));
+        manageTabletBtn.addEventListener('click', () => manageTabletModalOverlay.classList.add("visible"));
         
         adminModalOverlay.addEventListener('click', (e) => { 
             if (e.target === adminModalOverlay) {
                 adminModalOverlay.classList.remove("visible");
                 adminSearchResults.style.display = 'none';
+            }
+        });
+
+        manageTabletModalOverlay.addEventListener('click', (e) => {
+            if (e.target === manageTabletModalOverlay) {
+                manageTabletModalOverlay.classList.remove("visible");
+            }
+        });
+        manageTabletCloseBtn.addEventListener('click', () => manageTabletModalOverlay.classList.remove("visible"));
+
+        manageTabletActionBtns.addEventListener('click', (e) => {
+            const button = e.target.closest('.admin-action-btn');
+            if (button && button.dataset.status) {
+                const newStatus = button.dataset.status;
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'set_status', status: newStatus }));
+                    manageTabletModalOverlay.classList.remove("visible");
+                }
             }
         });
 

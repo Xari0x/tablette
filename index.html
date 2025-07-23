@@ -33,7 +33,14 @@
                             <h1>Véhicules</h1>
                             <p>Liste des véhicules à récupérer.</p>
                         </div>
-                        <button id="admin-panel-btn" style="display: none;">Modifier ma cible.</button>
+                        <div class="header-controls">
+                            <div id="live-info" style="display: none;">
+                                <span id="live-user-count"></span>
+                                <span id="tablet-status-display"></span>
+                            </div>
+                            <button id="manage-tablet-btn" style="display: none;">Gérer la tablette.</button>
+                            <button id="admin-panel-btn" style="display: none;">Modifier ma cible.</button>
+                        </div>
                     </header>
                     <div id="car-grid"></div>
                 </div>
@@ -70,6 +77,21 @@
         </div>
     </div>
     
+    <div id="manage-tablet-modal-overlay" class="modal-overlay">
+        <div class="admin-modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Gérer l'état de la tablette.</h2>
+            <div style="text-align: center; margin-bottom: 1.5rem; font-size: 1rem;">
+                Statut actuel : <strong id="current-tablet-status">Chargement...</strong>
+            </div>
+            <div class="form-actions">
+                <button data-status="open" class="admin-action-btn set-btn">Ouverte</button>
+                <button data-status="paused" class="admin-action-btn pause-btn">En pause</button>
+                <button data-status="closed" class="admin-action-btn remove-btn">Fermée</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./script.js"></script>
 </body>
 </html>

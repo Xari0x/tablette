@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   box-sizing: border-box;
   margin: 0;
@@ -132,7 +133,53 @@ header h1 {
 header p {
   color: #888;
 }
+header .header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+header #live-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: 2px solid rgba(189, 189, 189, 0.568627451);
+  border-radius: 8px;
+  font-weight: 600;
+  color: #e0e0e0;
+  transition: 0.2s;
+}
+header #live-user-count::before {
+  content: "●";
+  color: #2ecc71;
+  margin-right: 0.5rem;
+  font-size: 0.8em;
+  animation: pulse 1.5s infinite;
+}
+header #tablet-status-display {
+  font-weight: 700;
+}
+header #tablet-status-display.status-open {
+  color: #2ecc71;
+}
+header #tablet-status-display.status-paused {
+  color: #e67e22;
+}
+header #tablet-status-display.status-closed {
+  color: #e74c3c;
+}
 
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 #car-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -203,11 +250,14 @@ header p {
 
 .target-btn,
 .found-btn,
-#admin-panel-btn {
+#admin-panel-btn,
+#manage-tablet-btn {
   width: 100%;
   background-color: #282828;
   color: #e7e7e7;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: #e0e0e0;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   border: none;
@@ -215,15 +265,18 @@ header p {
   transition: background-color 0.3s;
 }
 
-#admin-panel-btn {
+#admin-panel-btn,
+#manage-tablet-btn {
   width: auto;
-  padding: 0.6rem 1.2rem;
-  border: 2px solid #bdbdbd;
+  padding: 0.75rem 1.2rem;
+  border: 2px solid rgba(189, 189, 189, 0.568627451);
   background-color: transparent;
   transition: 0.2s;
+  white-space: nowrap;
 }
-#admin-panel-btn:hover {
-  padding: 0.6rem 1.5rem;
+#admin-panel-btn:hover,
+#manage-tablet-btn:hover {
+  border-color: rgba(189, 189, 189, 0.9176470588);
 }
 
 .target-btn:hover:not(:disabled) {
@@ -483,6 +536,13 @@ header p {
 .form-actions .admin-action-btn.set-btn:hover {
   background-color: #2ecc71;
 }
+.form-actions .admin-action-btn.pause-btn {
+  background-color: #e67e22;
+  color: white;
+}
+.form-actions .admin-action-btn.pause-btn:hover {
+  background-color: #f39c12;
+}
 .form-actions .admin-action-btn.remove-btn {
   background-color: #c0392b;
   color: white;
@@ -520,6 +580,10 @@ header p {
 .notification.error {
   background-color: #e74c3c;
   animation: fadeInDown 0.5s ease;
+}
+.notification.errortemp {
+  background-color: #e74c3c;
+  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
 }
 
 @keyframes fadeInDown {
