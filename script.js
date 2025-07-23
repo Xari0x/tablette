@@ -133,7 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'paused':
                 statusText = 'En pause';
                 statusClass = 'status-paused';
-                carGrid.innerHTML = `<p>La tablette est actuellement en pause. Revenez plus tard.</p>`;
+                carGrid.innerHTML = currentVehicles.length > 0 ? '' : `<p>Aucune cible disponible pour le moment.</p>`;
+                if (currentVehicles.length > 0) renderVehicles(currentVehicles);
                 break;
             case 'closed':
                 statusText = 'Fermée';
