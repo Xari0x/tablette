@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let forceStop = false;
     let ws;
 
+    let isAdminPanelInitialized = false;
+
     const VEHICLE_MODELS = [
         'FAGGIO', 'BLAZER', 'BAGGER', 'NEMESIS', 'RUFFIAN', 'PCJ 600', 'THRUST', 'VADER', 'HAKUCHOU', 'DOUBLE T', 'DAEMON', 'BATI 801', 'SANCHEZ', 'AKUMA', 'CAVALCADE', 'TACO VAN', 'INTRUDER', 'SURGE', 'SENTINEL', 'SENTINEL XS', 'VIGERO', 'ORACLE', 'ORACLE XS', 'BANSHEE', 'SURFER', 'FQ 2', 'SURANO', 'DUBSTA', 'PICADOR', 'SCHAFTER', 'BUCCANEER', 'PHOENIX', 'WARRENER', 'MESA', 'RANCHER XL', 'BEEJAY XL', 'GRANGER', 'INFERNUS', 'FUGITIVE', 'RHAPSODY', 'LANDSTALKER', 'FELTZER', 'PENUMBRA', 'PRIMO', 'BALLER', 'MINIVAN', 'FELON GT', 'FELON', 'SABRE TURBO', 'CARBONIZZARE', 'HABANERO', 'BUFFALO', 'MASSACRO', 'INGOT', 'DUNELOADER', 'F620', 'JESTER', 'SANDKING XL', 'SANDKING SWB', 'DUKES', 'EXEMPLAR', 'MANANA', 'DILETTANTE', 'JACKAL', 'BLISTA', 'BLISTA COMPACT', 'SCHWARTZER', 'FUTO', 'TORNADO', 'ALPHA', 'RADIUS', 'ISSI', 'BOBCAT XL', 'SADLER', 'SULTAN', 'FURORE GT', 'ROCOTO', 'GAUNTLET', 'VOLTIC', 'CADDIE', 'ASTEROPE', 'REGINA', 'SUPER DIAMOND', 'BISON', 'PANTO', 'INJECTION', 'PIGALLE', 'EMPEROR', 'RAPID GT', 'DOMINATOR', 'GRESLEY', 'PREMIER', 'ZION', 'ZION CABRIO', 'PEYOTE', 'SEMINOLE', 'COQUETTE', 'STRATUM', 'YOUGA', 'SERRANO', 'PATRIOT', 'FUSILADE', 'COMET', 'PRAIRIE', '9F', 'REBEL ROUILLÉ', 'REBEL', 'GLENDALE', 'WASHINGTON', 'STALLION', 'HUNTLEY S', '9F CABRIO', 'RUINER', 'DUNE BUGGY'
     ];
@@ -259,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carGrid.addEventListener('mouseout', (event) => { if (event.target.classList.contains('car-image')) { const img = event.target; if (img.dataset.imgFront) img.src = img.dataset.imgFront; } });
 
     function setupAdminPanel() {
+        if (isAdminPanelInitialized) return;
         adminPanelBtn.style.display = 'block';
         manageTabletBtn.style.display = 'block';
         let selectedModel = null;
