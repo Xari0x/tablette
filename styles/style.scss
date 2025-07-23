@@ -141,6 +141,14 @@ header {
         font-weight: 600;
         color: #e0e0e0;
         transition: .2s;
+
+        &.clickable {
+            cursor: pointer;
+            &:hover {
+                border-color: #bdbdbde8;
+                background-color: #ffffff1a;
+            }
+        }
     }
 
     #live-user-count::before {
@@ -247,7 +255,8 @@ header {
     transition: .2s;
     white-space: nowrap;
     &:hover {
-        border-color: #bdbdbdea;
+        border-color: #bdbdbde8;
+        background-color: #ffffff1a;
     }
 }
 
@@ -493,6 +502,27 @@ header {
             &:hover { background-color: #e74c3c; }
         }
     }
+}
+
+#user-list-container {
+    margin-top: 1.5rem;
+    max-height: 40vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+    &::-webkit-scrollbar-thumb:hover { background: #777; }
+}
+
+.user-list-item {
+    background-color: #1f1f1f;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+    font-weight: 500;
 }
 
 #notification-container {

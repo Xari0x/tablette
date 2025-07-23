@@ -79,7 +79,6 @@
     
     <div id="manage-tablet-modal-overlay" class="modal-overlay">
         <div class="admin-modal-content">
-            <button class="modal-close-btn">&times;</button>
             <h2>Gérer l'état de la tablette.</h2>
             <div style="text-align: center; margin-bottom: 1.5rem; font-size: 1rem;">
                 Statut actuel : <strong id="current-tablet-status">Chargement...</strong>
@@ -89,6 +88,13 @@
                 <button data-status="paused" class="admin-action-btn pause-btn">En pause</button>
                 <button data-status="closed" class="admin-action-btn remove-btn">Fermée</button>
             </div>
+        </div>
+    </div>
+
+    <div id="user-list-modal-overlay" class="modal-overlay">
+        <div class="admin-modal-content">
+            <h2>Utilisateurs en ligne.</h2>
+            <div id="user-list-container"></div>
         </div>
     </div>
 

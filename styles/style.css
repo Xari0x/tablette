@@ -149,6 +149,13 @@ header #live-info {
   color: #e0e0e0;
   transition: 0.2s;
 }
+header #live-info.clickable {
+  cursor: pointer;
+}
+header #live-info.clickable:hover {
+  border-color: rgba(189, 189, 189, 0.9098039216);
+  background-color: rgba(255, 255, 255, 0.1019607843);
+}
 header #live-user-count::before {
   content: "●";
   color: #2ecc71;
@@ -276,7 +283,8 @@ header #tablet-status-display.status-closed {
 }
 #admin-panel-btn:hover,
 #manage-tablet-btn:hover {
-  border-color: rgba(189, 189, 189, 0.9176470588);
+  border-color: rgba(189, 189, 189, 0.9098039216);
+  background-color: rgba(255, 255, 255, 0.1019607843);
 }
 
 .target-btn:hover:not(:disabled) {
@@ -549,6 +557,35 @@ header #tablet-status-display.status-closed {
 }
 .form-actions .admin-action-btn.remove-btn:hover {
   background-color: #e74c3c;
+}
+
+#user-list-container {
+  margin-top: 1.5rem;
+  max-height: 40vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+#user-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+#user-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+#user-list-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+#user-list-container::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.user-list-item {
+  background-color: #1f1f1f;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+  font-weight: 500;
 }
 
 #notification-container {

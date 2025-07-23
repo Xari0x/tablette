@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentVehicles = [];
     let adminSlot = null;
+    let connectedUsers = []; // NOUVEAU: Pour stocker la liste des utilisateurs
 
     const carGrid = document.getElementById('car-grid');
     const contentWrapper = document.querySelector('.content-wrapper');
@@ -35,8 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const manageTabletBtn = document.getElementById('manage-tablet-btn');
     const manageTabletModalOverlay = document.getElementById('manage-tablet-modal-overlay');
     const currentTabletStatusEl = document.getElementById('current-tablet-status');
-    const manageTabletCloseBtn = manageTabletModalOverlay.querySelector('.modal-close-btn');
     const manageTabletActionBtns = manageTabletModalOverlay.querySelector('.form-actions');
+
+    const userListModalOverlay = document.getElementById('user-list-modal-overlay');
+    const userListContainer = document.getElementById('user-list-container');
 
     function showNotification(message, type = 'success') {
         const notif = document.createElement('div');
@@ -63,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('👀 Déconnecté. Tentative de reconnexion dans 5 secondes...');
             showNotification('Connexion perdue. Tentative de reconnexion...', 'errortemp');
             liveInfoEl.style.display = 'none';
+            liveInfoEl.classList.remove('clickable');
+            connectedUsers = [];
             setTimeout(connectWebSocket, 5000); 
         };
         
@@ -89,6 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'user_count':
                     liveUserCountEl.textContent = `${data.count} en ligne`;
                     liveInfoEl.style.display = 'flex';
+                    break;
+                case 'user_list':
+                    connectedUsers = data.users;
+                    liveInfoEl.classList.add('clickable');
                     break;
                 case 'tablet_status':
                     updateTabletStatus(data.status);
@@ -261,6 +270,30 @@ document.addEventListener('DOMContentLoaded', () => {
     carGrid.addEventListener('mouseover', (event) => { if (event.target.classList.contains('car-image')) { const img = event.target; if (img.dataset.imgRear) img.src = img.dataset.imgRear; } });
     carGrid.addEventListener('mouseout', (event) => { if (event.target.classList.contains('car-image')) { const img = event.target; if (img.dataset.imgFront) img.src = img.dataset.imgFront; } });
 
+    liveInfoEl.addEventListener('click', () => {
+        if (liveInfoEl.classList.contains('clickable')) {
+            userListContainer.innerHTML = '';
+            if (connectedUsers.length > 0) {
+                connectedUsers.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-list-item';
+                    userItem.textContent = user;
+                    userListContainer.appendChild(userItem);
+                });
+            } else {
+                userListContainer.innerHTML = '<p>Personne n\'est connecté.</p>';
+            }
+            userListModalOverlay.classList.add('visible');
+        }
+    });
+
+    userListModalOverlay.addEventListener('click', (e) => {
+        if (e.target === userListModalOverlay) {
+            userListModalOverlay.classList.remove('visible');
+        }
+    });
+
+
     function setupAdminPanel() {
         if (isAdminPanelInitialized) return;
         adminPanelBtn.style.display = 'block';
@@ -284,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 manageTabletModalOverlay.classList.remove("visible");
             }
         });
-        manageTabletCloseBtn.addEventListener('click', () => manageTabletModalOverlay.classList.remove("visible"));
 
         manageTabletActionBtns.addEventListener('click', (e) => {
             const button = e.target.closest('.admin-action-btn');
