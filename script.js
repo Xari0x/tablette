@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentVehicles = [];
     let adminSlot = null;
-    let connectedUsers = []; // NOUVEAU: Pour stocker la liste des utilisateurs
+    let connectedUsers = [];
 
     const carGrid = document.getElementById('car-grid');
     const contentWrapper = document.querySelector('.content-wrapper');
@@ -85,6 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.adminSlot) {
                         adminSlot = data.adminSlot;
                         setupAdminPanel();
+                    } else {
+                        liveUserCountEl.style.display = 'none';
                     }
                     break;
                 case 'vehicles_update':
@@ -93,13 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                 case 'user_count':
                     liveUserCountEl.textContent = `${data.count} en ligne`;
-                    liveInfoEl.style.display = 'flex';
                     break;
                 case 'user_list':
                     connectedUsers = data.users;
                     liveInfoEl.classList.add('clickable');
                     break;
                 case 'tablet_status':
+                    liveInfoEl.style.display = 'flex';
                     updateTabletStatus(data.status);
                     break;
                 case 'find_error':
