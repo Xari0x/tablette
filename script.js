@@ -350,5 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  adminSearchResults.style.display = 'none';
             }
         });
+
+        isAdminPanelInitialized = true;
     }
 });
