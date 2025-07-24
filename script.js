@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVehicles = [];
     let adminSlot = null;
     let connectedUsers = [];
+    let tabletStatus = "closed";
 
     const carGrid = document.getElementById('car-grid');
     const contentWrapper = document.querySelector('.content-wrapper');
@@ -154,6 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
 
+        tabletStatus = status
+
         tabletStatusDisplayEl.textContent = statusText;
         tabletStatusDisplayEl.className = `tablet-status-display ${statusClass}`;
         currentTabletStatusEl.textContent = statusText;
@@ -211,7 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
             carGrid.appendChild(card);
         });
         if (count === 0) {
-            carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
+            if(tabletStatus === "closed"){
+                carGrid.innerHTML = `<p>La tablette est actuellement fermée.</p>`;
+            }else{
+                carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
+            }
         }
         carGrid.classList.remove('loading');
     };
