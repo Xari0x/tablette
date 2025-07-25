@@ -34,6 +34,10 @@ body {
     padding: 0.6rem;
 }
 
+.vibrating {
+    animation: vibrate 0.4s linear infinite;
+}
+
 .tablet-camera {
     height: 24px;
     display: flex;
@@ -243,7 +247,9 @@ header {
 .target-btn,
 .found-btn,
 #admin-panel-btn,
-#manage-tablet-btn {
+#manage-tablet-btn,
+#easter-egg-btn,
+#force-refresh-btn {
     width: 100%;
     background-color: #282828;
     color: #e7e7e7;
@@ -258,7 +264,9 @@ header {
 }
 
 #admin-panel-btn,
-#manage-tablet-btn {
+#manage-tablet-btn,
+#easter-egg-btn,
+#force-refresh-btn {
     width: auto;
     padding: 0.75rem 1.2rem;
     border: 2px solid #bdbdbd91;
@@ -268,6 +276,15 @@ header {
     &:hover {
         border-color: #bdbdbde8;
         background-color: #ffffff1a;
+    }
+}
+
+#easter-egg-btn {
+    padding: 0.55rem 1.2rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    &:hover {
+        transform: rotate(15deg) scale(1.1);
     }
 }
 
@@ -561,6 +578,20 @@ header {
 
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+/* EASTER EGG: Ajout de l'animation de vibration */
+@keyframes vibrate {
+    0% { transform: translate(0); }
+    10% { transform: translate(-2px, -2px); }
+    20% { transform: translate(2px, 2px); }
+    30% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    70% { transform: translate(-2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    90% { transform: translate(-2px, -2px); }
+    100% { transform: translate(0); }
+}
 
 @media (min-width: 768px) { #car-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) { body { padding: 2rem; } #car-grid { grid-template-columns: repeat(3, 1fr); } }

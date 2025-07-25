@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let forceStop = false;
     let ws;
 
+    let isTheAdmin = false;
     let isAdminPanelInitialized = false;
 
     const VEHICLE_MODELS = [
@@ -41,6 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userListModalOverlay = document.getElementById('user-list-modal-overlay');
     const userListContainer = document.getElementById('user-list-container');
+
+    const easterEggBtn = document.getElementById('easter-egg-btn');
+    const forceRefreshBtn = document.getElementById('force-refresh-btn');
+    const easterEggAudio = document.getElementById('easter-egg-audio');
+    const tabletFrame = document.querySelector('.tablet-frame');
 
     function showNotification(message, type = 'success') {
         const notif = document.createElement('div');
@@ -89,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         liveUserCountEl.style.display = 'none';
                     }
+                    if (data.user && data.user[3] === 'ADMIN') {
+                        isTheAdmin = true;
+                        easterEggBtn.style.display = 'block';
+                        forceRefreshBtn.style.display = 'block';
+                    }
                     break;
                 case 'vehicles_update':
                     carGrid.classList.add('loading');
@@ -104,6 +115,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'tablet_status':
                     liveInfoEl.style.display = 'flex';
                     updateTabletStatus(data.status);
+                    break;
+                case 'easter_egg':
+                    tabletFrame.classList.add('vibrating');
+                    easterEggAudio.volume = 0.2;
+                    easterEggAudio.play().catch(e => console.error("Erreur lecture audio:", e));
+                    setTimeout(() => {
+                        tabletFrame.classList.remove('vibrating');
+                    }, 2000);
+                    break;
+                case 'force_refresh':
+                    location.reload();
                     break;
                 case 'find_error':
                 case 'unfind_error':
@@ -302,6 +324,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    easterEggBtn.addEventListener('click', () => {
+        if (isTheAdmin && ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'easter_egg' }));
+        }
+    });
+
+    forceRefreshBtn.addEventListener('click', () => {
+        if (isTheAdmin && ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'force_refresh' }));
+        }
+    });
 
     function setupAdminPanel() {
         if (isAdminPanelInitialized) return;
