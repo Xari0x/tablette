@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageModal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-img');
     const timeEl = document.getElementById('tablet-time');
+    const batteryEl = document.getElementById('tablet-battery');
     
     const liveInfoEl = document.getElementById('live-info');
     const liveUserCountEl = document.getElementById('live-user-count');
@@ -278,6 +279,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => contentWrapper.classList.add('loaded'), 300);
     setInterval(() => { timeEl.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }, 1000);
+
+    function getRandomInt(min, max) {
+        const minCeiled = Math.ceil(min);
+        const maxFloored = Math.floor(max);
+        return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+    }
+
+    batteryEl.textContent = `${getRandomInt(10, 100)}%`
 
     carGrid.addEventListener('click', async (event) => {
         const button = event.target.closest('.target-btn');
