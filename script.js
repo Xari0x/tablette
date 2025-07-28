@@ -105,11 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     carGrid.classList.add('loading');
                     setTimeout(() => updateVehicleList(data.payload), 300);
                     break;
-                case 'user_count':
-                    liveUserCountEl.textContent = `${data.count} en ligne`;
-                    break;
                 case 'user_list':
                     connectedUsers = data.users;
+                    liveUserCountEl.textContent = `${connectedUsers.length} en ligne`;
                     liveInfoEl.classList.add('clickable');
                     break;
                 case 'tablet_status':
