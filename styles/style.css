@@ -246,11 +246,6 @@ header #tablet-status-display.status-maintenance {
 .car-card.validated3 .car-image {
   filter: grayscale(1) opacity(0.5);
 }
-.car-card.has-custom-price {
-  animation: gold-shimmer 2.5s infinite linear;
-  border-width: 2px;
-  border-style: solid;
-}
 .car-card .card-content {
   padding: 1rem;
 }
@@ -283,21 +278,6 @@ header #tablet-status-display.status-maintenance {
   padding: 1rem;
   background-color: rgba(0, 0, 0, 0.062745098);
   border-top: 1px solid rgba(0, 0, 0, 0.062745098);
-}
-
-.custom-price-tag {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: linear-gradient(45deg, #ffd700, #f9d949);
-  color: #1a1a1a;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 5;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .target-btn,
@@ -364,7 +344,7 @@ header #tablet-status-display.status-maintenance {
   background-color: rgba(243, 239, 18, 0.1647058824);
 }
 #maintenance-mode-btn.active svg {
-  stroke: white;
+  stroke: #f3ef12;
 }
 
 #force-refresh-btn:hover {

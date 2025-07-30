@@ -227,12 +227,6 @@ header {
         border: 2px solid #e67e22;
         .car-image { filter: grayscale(1) opacity(0.5); }
     }
-    
-    &.has-custom-price {
-        animation: gold-shimmer 2.5s infinite linear;
-        border-width: 2px;
-        border-style: solid;
-    }
 
     .card-content { padding: 1rem; }
     .card-image-container { margin-bottom: 1rem; position: relative; }
@@ -260,21 +254,6 @@ header {
         background-color: #00000010;
         border-top: 1px solid #00000010;
     }
-}
-
-.custom-price-tag {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: linear-gradient(45deg, #ffd700, #f9d949);
-    color: #1a1a1a;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    z-index: 5;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
 }
 
 .target-btn,
@@ -333,7 +312,7 @@ header {
     &.active {
         border-color: #f3ef12;
         background-color: #f3ef122a;
-        svg { stroke: white; }
+        svg { stroke: #f3ef12; }
     }
 }
 

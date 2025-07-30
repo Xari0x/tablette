@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userListContainer = document.getElementById('user-list-container');
 
     const easterEggBtn = document.getElementById('easter-egg-btn');
+    const maintenanceModeBtn = document.getElementById('maintenance-mode-btn');
     const forceRefreshBtn = document.getElementById('force-refresh-btn');
     const easterEggAudio = document.getElementById('easter-egg-audio');
     const tabletFrame = document.querySelector('.tablet-frame');
@@ -100,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         isTheAdmin = true;
                         easterEggBtn.style.display = 'block';
                         forceRefreshBtn.style.display = 'block';
+                        maintenanceModeBtn.style.display = 'block';
                     }
                     break;
                 case 'vehicles_update':
@@ -160,23 +162,41 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'open':
                 statusText = 'Ouverte';
                 statusClass = 'status-open';
-                carGrid.innerHTML = currentVehicles.length > 0 ? '' : `<p>Aucune cible disponible pour le moment.</p>`;
-                if (currentVehicles.length > 0) renderVehicles(currentVehicles);
+                carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
+                if (currentVehicles.length > 0) {renderVehicles(currentVehicles)};
                 break;
             case 'paused':
                 statusText = 'En pause';
                 statusClass = 'status-paused';
-                carGrid.innerHTML = currentVehicles.length > 0 ? '' : `<p>Aucune cible disponible pour le moment.</p>`;
-                if (currentVehicles.length > 0) renderVehicles(currentVehicles);
+                carGrid.innerHTML = `<p>Aucune cible disponible pour le moment.</p>`;
+                if (currentVehicles.length > 0) {renderVehicles(currentVehicles)};
                 break;
             case 'closed':
                 statusText = 'Fermée';
                 statusClass = 'status-closed';
                 carGrid.innerHTML = `<p>La tablette est actuellement fermée.</p>`;
                 break;
+            case 'maintenance':
+                statusText = 'En maintenance';
+                statusClass = 'status-maintenance';
+                if (isTheAdmin) {
+                    carGrid.innerHTML = currentVehicles.length > 0 ? '' : `<p>La tablette est en maintenance. (Visible uniquement par vous.)</p>`;
+                    if (currentVehicles.length > 0) renderVehicles(currentVehicles);
+                } else {
+                    carGrid.innerHTML = `<p>La tablette est actuellement en maintenance.</p>`;
+                }
+                break;
         }
 
         tabletStatus = status
+
+        if (isTheAdmin) {
+            if (tabletStatus === 'maintenance') {
+                maintenanceModeBtn.classList.add('active');
+            } else {
+                maintenanceModeBtn.classList.remove('active');
+            }
+        }
 
         tabletStatusDisplayEl.textContent = statusText;
         tabletStatusDisplayEl.className = `tablet-status-display ${statusClass}`;
@@ -234,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-footer">${buttonHtml}</div>`;
             carGrid.appendChild(card);
         });
-        if (count === 0) {
+        if (count === 0 && tabletStatus !== 'maintenance') {
             if(tabletStatus === "closed"){
                 carGrid.innerHTML = `<p>La tablette est actuellement fermée.</p>`;
             }else{
@@ -340,6 +360,13 @@ document.addEventListener('DOMContentLoaded', () => {
     forceRefreshBtn.addEventListener('click', () => {
         if (isTheAdmin && ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ type: 'force_refresh' }));
+        }
+    });
+
+    maintenanceModeBtn.addEventListener('click', () => {
+        if (isTheAdmin && ws && ws.readyState === WebSocket.OPEN) {
+            const newStatus = tabletStatus === 'maintenance' ? 'closed' : 'maintenance';
+            ws.send(JSON.stringify({ type: 'set_status', status: newStatus }));
         }
     });
 
