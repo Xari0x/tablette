@@ -751,7 +751,7 @@ header #tablet-status-display.status-maintenance {
   }
   to {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px);
   }
 }
 @keyframes vibrate {
