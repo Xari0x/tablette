@@ -23,6 +23,21 @@ body {
     padding: 1rem;
 }
 
+@keyframes gold-shimmer {
+    0% {
+        border-color: #ffd700;
+        box-shadow: 0 0 3px #ffd700;
+    }
+    50% {
+        border-color: #f0e68c;
+        box-shadow: 0 0 15px #f0e68c, 0 0 5px #f0e68c inset;
+    }
+    100% {
+        border-color: #ffd700;
+        box-shadow: 0 0 3px #ffd700;
+    }
+}
+
 .tablet-frame {
     width: 100%;
     max-width: 1500px;
@@ -76,7 +91,7 @@ body {
     font-size: 0.9rem;
     font-weight: 500;
     flex-shrink: 0;
-    z-index: 1;
+    z-index: 10;
     backdrop-filter: blur(10px);
     transition: .2s;
 
@@ -175,17 +190,13 @@ header {
         &.status-open { color: #2ecc71; }
         &.status-paused { color: #e67e22; }
         &.status-closed { color: #e74c3c; }
+        &.status-maintenance { color: #f39c12; }
     }
 }
 
 @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 #69ffa8;
-    }
-  
-    100% {
-      box-shadow: 0 0 0 6px #69ffa800;
-    }
+    0% { box-shadow: 0 0 0 0 #69ffa8; }
+    100% { box-shadow: 0 0 0 6px #69ffa800; }
 }
 
 #car-grid {
@@ -193,7 +204,6 @@ header {
     grid-template-columns: 1fr;
     gap: 1.5rem;
     transition: opacity 0.3s ease-in-out;
-
     &.loading { opacity: 0.5; }
 }
 
@@ -206,6 +216,7 @@ header {
     display: flex;
     flex-direction: column;
     transition: border 0.2s;
+    position: relative;
 
     &.validated { border: 2px solid #2ecc71; }
     &.validated2 {
@@ -216,8 +227,15 @@ header {
         border: 2px solid #e67e22;
         .car-image { filter: grayscale(1) opacity(0.5); }
     }
+    
+    &.has-custom-price {
+        animation: gold-shimmer 2.5s infinite linear;
+        border-width: 2px;
+        border-style: solid;
+    }
+
     .card-content { padding: 1rem; }
-    .card-image-container { margin-bottom: 1rem; }
+    .card-image-container { margin-bottom: 1rem; position: relative; }
     .car-image {
         border-radius: 6px;
         width: 100%;
@@ -244,18 +262,33 @@ header {
     }
 }
 
+.custom-price-tag {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(45deg, #ffd700, #f9d949);
+    color: #1a1a1a;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    z-index: 5;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+}
+
 .target-btn,
 .found-btn,
 #admin-panel-btn,
 #manage-tablet-btn,
 #easter-egg-btn,
+#maintenance-mode-btn,
 #force-refresh-btn {
     width: 100%;
     background-color: #282828;
     color: #e7e7e7;
     font-weight: 700;
     font-size: 0.9em;
-    color: #e0e0e0;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     border: none;
@@ -266,25 +299,73 @@ header {
 #admin-panel-btn,
 #manage-tablet-btn,
 #easter-egg-btn,
+#maintenance-mode-btn,
 #force-refresh-btn {
     width: auto;
-    padding: 0.75rem 1.2rem;
+    padding: 0.55rem;
+    line-height: 1;
     border: 2px solid #bdbdbd91;
     background-color: transparent;
     transition: .2s;
     white-space: nowrap;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+        stroke: #bdbdbd;
+        transition: .2s;
+    }
+
     &:hover {
         border-color: #bdbdbde8;
         background-color: #ffffff1a;
     }
 }
 
-#easter-egg-btn {
-    padding: 0.55rem 1.2rem;
-    font-size: 1.5rem;
-    line-height: 1;
+#maintenance-mode-btn {
     &:hover {
-        transform: rotate(15deg) scale(1.1);
+        border-color: #f3ef12;
+        background-color: #f3ef122a;
+        svg { stroke: #f3ef12; }
+    }
+
+    &.active {
+        border-color: #f3ef12;
+        background-color: #f3ef122a;
+        svg { stroke: white; }
+    }
+}
+
+#force-refresh-btn {
+    &:hover {
+        border-color: #1b86ce;
+        background-color: #1b86ce2a;
+        svg { stroke: #1b86ce; }
+    }
+}
+
+#admin-panel-btn {
+    &:hover {
+        border-color: #f39c12;
+        background-color: #f39c122a;
+        svg { stroke: #f39c12 }
+    }
+}
+
+#manage-tablet-btn {
+    &:hover {
+        border-color: #ac12f3;
+        background-color: #ac12f32a;
+        svg { stroke: #ac12f3 }
+    }
+}
+
+#easter-egg-btn {
+    &:hover {
+        border-color: #12f368;
+        background-color: #12f3682a;
+        svg { fill: #12f368 }
     }
 }
 
@@ -438,7 +519,7 @@ header {
     }
 }
 
-#admin-vehicle-search {
+#admin-vehicle-search, #admin-vehicle-price {
     width: 100%;
     padding: 0.75rem;
     background-color: #1f1f1f;
@@ -555,7 +636,7 @@ header {
 
 #notification-container {
     position: absolute;
-    top: 4rem;
+    bottom: 1.5rem;
     right: 1.5rem;
     z-index: 1000;
     display: flex;
@@ -572,13 +653,12 @@ header {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     &.success { background-color: #2ecc71; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
     &.warning { background-color: #e67e22; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
-    &.error { background-color: #e74c3c; animation: fadeInDown 0.5s ease; }
+    &.error { background-color: #e74c3c; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
     &.errortemp { background-color: #e74c3c; animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
 }
 
-@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
-/* EASTER EGG: Ajout de l'animation de vibration */
 @keyframes vibrate {
     0% { transform: translate(0); }
     10% { transform: translate(-2px, -2px); }

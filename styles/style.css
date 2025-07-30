@@ -23,6 +23,20 @@ body {
   padding: 1rem;
 }
 
+@keyframes gold-shimmer {
+  0% {
+    border-color: #ffd700;
+    box-shadow: 0 0 3px #ffd700;
+  }
+  50% {
+    border-color: #f0e68c;
+    box-shadow: 0 0 15px #f0e68c, 0 0 5px #f0e68c inset;
+  }
+  100% {
+    border-color: #ffd700;
+    box-shadow: 0 0 3px #ffd700;
+  }
+}
 .tablet-frame {
   width: 100%;
   max-width: 1500px;
@@ -75,7 +89,7 @@ body {
   font-size: 0.9rem;
   font-weight: 500;
   flex-shrink: 0;
-  z-index: 1;
+  z-index: 10;
   backdrop-filter: blur(10px);
   transition: 0.2s;
 }
@@ -184,6 +198,9 @@ header #tablet-status-display.status-paused {
 header #tablet-status-display.status-closed {
   color: #e74c3c;
 }
+header #tablet-status-display.status-maintenance {
+  color: #f39c12;
+}
 
 @keyframes pulse {
   0% {
@@ -212,6 +229,7 @@ header #tablet-status-display.status-closed {
   display: flex;
   flex-direction: column;
   transition: border 0.2s;
+  position: relative;
 }
 .car-card.validated {
   border: 2px solid #2ecc71;
@@ -228,11 +246,17 @@ header #tablet-status-display.status-closed {
 .car-card.validated3 .car-image {
   filter: grayscale(1) opacity(0.5);
 }
+.car-card.has-custom-price {
+  animation: gold-shimmer 2.5s infinite linear;
+  border-width: 2px;
+  border-style: solid;
+}
 .car-card .card-content {
   padding: 1rem;
 }
 .car-card .card-image-container {
   margin-bottom: 1rem;
+  position: relative;
 }
 .car-card .car-image {
   border-radius: 6px;
@@ -261,18 +285,33 @@ header #tablet-status-display.status-closed {
   border-top: 1px solid rgba(0, 0, 0, 0.062745098);
 }
 
+.custom-price-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(45deg, #ffd700, #f9d949);
+  color: #1a1a1a;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
 .target-btn,
 .found-btn,
 #admin-panel-btn,
 #manage-tablet-btn,
 #easter-egg-btn,
+#maintenance-mode-btn,
 #force-refresh-btn {
   width: 100%;
   background-color: #282828;
   color: #e7e7e7;
   font-weight: 700;
   font-size: 0.9em;
-  color: #e0e0e0;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   border: none;
@@ -283,29 +322,81 @@ header #tablet-status-display.status-closed {
 #admin-panel-btn,
 #manage-tablet-btn,
 #easter-egg-btn,
+#maintenance-mode-btn,
 #force-refresh-btn {
   width: auto;
-  padding: 0.75rem 1.2rem;
+  padding: 0.55rem;
+  line-height: 1;
   border: 2px solid rgba(189, 189, 189, 0.568627451);
   background-color: transparent;
   transition: 0.2s;
   white-space: nowrap;
 }
+#admin-panel-btn svg,
+#manage-tablet-btn svg,
+#easter-egg-btn svg,
+#maintenance-mode-btn svg,
+#force-refresh-btn svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  stroke: #bdbdbd;
+  transition: 0.2s;
+}
 #admin-panel-btn:hover,
 #manage-tablet-btn:hover,
 #easter-egg-btn:hover,
+#maintenance-mode-btn:hover,
 #force-refresh-btn:hover {
   border-color: rgba(189, 189, 189, 0.9098039216);
   background-color: rgba(255, 255, 255, 0.1019607843);
 }
 
-#easter-egg-btn {
-  padding: 0.55rem 1.2rem;
-  font-size: 1.5rem;
-  line-height: 1;
+#maintenance-mode-btn:hover {
+  border-color: #f3ef12;
+  background-color: rgba(243, 239, 18, 0.1647058824);
 }
+#maintenance-mode-btn:hover svg {
+  stroke: #f3ef12;
+}
+#maintenance-mode-btn.active {
+  border-color: #f3ef12;
+  background-color: rgba(243, 239, 18, 0.1647058824);
+}
+#maintenance-mode-btn.active svg {
+  stroke: white;
+}
+
+#force-refresh-btn:hover {
+  border-color: #1b86ce;
+  background-color: rgba(27, 134, 206, 0.1647058824);
+}
+#force-refresh-btn:hover svg {
+  stroke: #1b86ce;
+}
+
+#admin-panel-btn:hover {
+  border-color: #f39c12;
+  background-color: rgba(243, 156, 18, 0.1647058824);
+}
+#admin-panel-btn:hover svg {
+  stroke: #f39c12;
+}
+
+#manage-tablet-btn:hover {
+  border-color: #ac12f3;
+  background-color: rgba(172, 18, 243, 0.1647058824);
+}
+#manage-tablet-btn:hover svg {
+  stroke: #ac12f3;
+}
+
 #easter-egg-btn:hover {
-  transform: rotate(15deg) scale(1.1);
+  border-color: #12f368;
+  background-color: rgba(18, 243, 104, 0.1647058824);
+}
+#easter-egg-btn:hover svg {
+  fill: #12f368;
 }
 
 .target-btn:hover:not(:disabled) {
@@ -478,7 +569,7 @@ header #tablet-status-display.status-closed {
   color: #ccc;
 }
 
-#admin-vehicle-search {
+#admin-vehicle-search, #admin-vehicle-price {
   width: 100%;
   padding: 0.75rem;
   background-color: #1f1f1f;
@@ -611,7 +702,7 @@ header #tablet-status-display.status-closed {
 
 #notification-container {
   position: absolute;
-  top: 4rem;
+  bottom: 1.5rem;
   right: 1.5rem;
   z-index: 1000;
   display: flex;
@@ -637,7 +728,7 @@ header #tablet-status-display.status-closed {
 }
 .notification.error {
   background-color: #e74c3c;
-  animation: fadeInDown 0.5s ease;
+  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
 }
 .notification.errortemp {
   background-color: #e74c3c;
@@ -647,7 +738,7 @@ header #tablet-status-display.status-closed {
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -663,7 +754,6 @@ header #tablet-status-display.status-closed {
     transform: translateY(-20px);
   }
 }
-/* EASTER EGG: Ajout de l'animation de vibration */
 @keyframes vibrate {
   0% {
     transform: translate(0);
