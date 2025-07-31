@@ -246,11 +246,17 @@ header #tablet-status-display.status-maintenance {
 .car-card.validated2 {
   border: 2px solid #e74c3c;
 }
+.car-card.validated2 .card-image-container .promo-price {
+  filter: grayscale(1) opacity(0.5);
+}
 .car-card.validated2 .car-image {
   filter: grayscale(1) opacity(0.5);
 }
 .car-card.validated3 {
   border: 2px solid #e67e22;
+}
+.car-card.validated3 .card-image-container .promo-price {
+  filter: grayscale(1) opacity(0.5);
 }
 .car-card.validated3 .car-image {
   filter: grayscale(1) opacity(0.5);
