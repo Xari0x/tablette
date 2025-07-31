@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminPanelBtn = document.getElementById('admin-panel-btn');
     const adminModalOverlay = document.getElementById('admin-modal-overlay');
     const adminVehicleSearch = document.getElementById('admin-vehicle-search');
+    const adminVehicleCustomPrice = document.getElementById('admin-vehicle-price');
     const adminSearchResults = document.getElementById('admin-search-results');
     const adminVehiclePreview = document.getElementById('admin-vehicle-preview');
     const adminSetVehicleBtn = document.getElementById('admin-set-vehicle-btn');
@@ -214,6 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'car-card';
             card.dataset.id = car[0];
 
+            if(car[5]){
+                card.classList.add("promo")
+            }
+
             const isFound = car[3] && car[3].length > 0;
             const isFoundByMe = isFound && car[3] === API_TOKEN;
             const isAdmin = adminSlot != null;
@@ -248,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="./images/${car[1]}_front.png" alt="Vue avant ${car[1]}" class="car-image" data-img-front="./images/${car[1]}_front.png"
                                 ${car[1] ? `data-img-rear="./images/${car[1]}_back.png"` : ''}
                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/ccc/000?text=Image+Indisponible';">
+                        ${car[5] ? `<span class="promo-price">${car[5]}</span>` : ''}
                     </div>
                     <h2 class="card-title">${car[1]}</h2>
                 </div>
@@ -440,7 +446,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         adminSetVehicleBtn.addEventListener('click', () => {
             if (selectedModel && adminSlot && VEHICLE_MODELS.includes(selectedModel) && ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'setVehicle', slot: adminSlot, vehicleModel: selectedModel }));
+                let customPrice = 0;
+                if (adminVehicleCustomPrice.value && adminVehicleCustomPrice.value.length < 10){
+                    customPrice = adminVehicleCustomPrice.value
+                }
+                ws.send(JSON.stringify({ type: 'setVehicle', slot: adminSlot, vehicleModel: selectedModel, customPrice: customPrice }));
                 adminModalOverlay.classList.remove("visible");
             } else {
                 showNotification('Veuillez sélectionner un véhicule valide dans la liste.', 'warning');

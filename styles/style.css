@@ -9,6 +9,16 @@
   user-select: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 body {
   font-family: "Inter", sans-serif;
   background-color: #121212;
@@ -221,11 +231,10 @@ header #tablet-status-display.status-maintenance {
 }
 
 .car-card {
-  background-color: rgba(0, 0, 0, 0.2039215686);
-  border: 1px solid rgba(0, 0, 0, 0.062745098);
+  background-color: #202020;
+  border: 1px solid #2b2b2b;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.233);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: border 0.2s;
@@ -253,6 +262,9 @@ header #tablet-status-display.status-maintenance {
   margin-bottom: 1rem;
   position: relative;
 }
+.car-card .card-image-container:hover .car-image {
+  transform: scale(1.05);
+}
 .car-card .car-image {
   border-radius: 6px;
   width: 100%;
@@ -260,9 +272,6 @@ header #tablet-status-display.status-maintenance {
   object-fit: cover;
   cursor: pointer;
   transition: transform 0.3s ease-in-out;
-}
-.car-card .car-image:hover {
-  transform: scale(1.05);
 }
 .car-card .card-title {
   text-align: center;
@@ -280,6 +289,43 @@ header #tablet-status-display.status-maintenance {
   border-top: 1px solid rgba(0, 0, 0, 0.062745098);
 }
 
+.promo .card-image-container .car-image {
+  border: 2px solid white;
+  animation: shine 3s linear infinite;
+}
+.promo .card-image-container .promo-price {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: white;
+  font-weight: 600;
+  background-color: rgba(228, 202, 58, 0.6352941176);
+  backdrop-filter: blur(10px);
+  padding: 3px 10px;
+  border-radius: 4px;
+  transition: 0.3s ease-in-out;
+  border: 1px solid #f3e073;
+}
+.promo .card-image-container:hover .promo-price {
+  transform: scale(1.05);
+  left: 4px;
+  top: 6px;
+}
+
+@keyframes shine {
+  0% {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px #ffd700;
+  }
+  50% {
+    border-color: #ffef95;
+    box-shadow: 0 0 10px #f0e68c, 0 0 5px #f0e68c inset;
+  }
+  100% {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px #ffd700;
+  }
+}
 .target-btn,
 .found-btn,
 #admin-panel-btn,
