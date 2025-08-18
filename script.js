@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let API_TOKEN = params.get("token");
     let forceStop = false;
     let ws;
+    let reconnectionAttempts = 0;
+    const MAX_RECONNECTION_ATTEMPTS = 5;
 
     let isTheAdmin = false;
     let isAdminPanelInitialized = false;
@@ -67,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onopen = () => {
             console.log('✅ Connecté au WebSocket !');
             showNotification('Connecté à la tablette.', 'success');
+            reconnectionAttempts = 0; // <--- AJOUTER CETTE LIGNE
             if (API_TOKEN) {
                 ws.send(JSON.stringify({ type: 'auth', token: API_TOKEN }));
             }
@@ -74,11 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ws.onclose = () => {
             console.log('👀 Déconnecté. Tentative de reconnexion dans 5 secondes...');
-            showNotification('Connexion perdue. Tentative de reconnexion...', 'errortemp');
             liveInfoEl.style.display = 'none';
             liveInfoEl.classList.remove('clickable');
             connectedUsers = [];
-            setTimeout(connectWebSocket, 5000); 
+
+            if (reconnectionAttempts < MAX_RECONNECTION_ATTEMPTS) {
+                reconnectionAttempts++;
+                showNotification(`Connexion perdue. Tentative ${reconnectionAttempts}/${MAX_RECONNECTION_ATTEMPTS}...`, 'errortemp');
+                setTimeout(connectWebSocket, 5000); 
+            } else {
+                showNotification("Impossible de se reconnecter. Veuillez rafraîchir la page.", 'error');
+                console.error("❌ Échec de la reconnexion après 5 tentatives. Abandon.");
+            } 
         };
         
         ws.onerror = (error) => {
