@@ -760,7 +760,7 @@ header #tablet-status-display.status-maintenance {
 }
 .notification.error {
   background-color: #e74c3c;
-  animation: fadeInDown 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+  animation: fadeInDown 0.5s ease, forwards;
 }
 .notification.errortemp {
   background-color: #e74c3c;
