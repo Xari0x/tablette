@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onopen = () => {
             console.log('✅ Connecté au WebSocket !');
             showNotification('Connecté à la tablette.', 'success');
-            reconnectionAttempts = 0;
             if (API_TOKEN) {
                 ws.send(JSON.stringify({ type: 'auth', token: API_TOKEN }));
             }
@@ -102,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (data.type) {
                 case 'auth_success':
                     showNotification('Authentification réussie.', 'success');
+                    reconnectionAttempts = 0;
                     if (data.adminSlot) {
                         adminSlot = data.adminSlot;
                         setupAdminPanel();
